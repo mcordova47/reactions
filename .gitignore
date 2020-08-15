@@ -1,0 +1,7 @@
+.cache
+dist
+node_modules
+output
+package-lock.json
+.spago
+.psc-ide-port
