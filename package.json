@@ -4,6 +4,9 @@
   "description": "Reactions Pub/Sub for OBS",
   "main": "index.js",
   "scripts": {
+    "build": "spago build",
+    "build-production": "npm run build && parcel build index.html",
+    "start": "npm run build && parcel index.html",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
@@ -23,6 +26,9 @@
   },
   "dependencies": {
     "react": "^16.13.1",
-    "react-dom": "^16.13.1"
+    "react-dom": "^16.13.1",
+    "react-feather": "^2.0.8",
+    "tailwindcss": "^1.6.2",
+    "uuid-validate": "0.0.3"
   }
 }
