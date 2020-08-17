@@ -1,7 +1,8 @@
 { name =
     "reactions"
 , dependencies =
-    [ "console"
+    [ "affjax"
+    , "console"
     , "effect"
     , "elmish"
     , "elmish-html"

@@ -2,7 +2,12 @@ module Main where
 
 import Prelude
 
+import Affjax as Affjax
+import Affjax.RequestBody as RequestBody
+import Affjax.ResponseFormat as ResponseFormat
+import Data.Either (Either(..))
 import Data.Foldable (elem)
+import Data.HTTP.Method (Method(..))
 import Data.Maybe (Maybe(..), maybe)
 import Data.String (Pattern(..), stripPrefix)
 import Data.String as String
@@ -12,7 +17,7 @@ import Effect (Effect)
 import Effect.Aff (Milliseconds(..), delay)
 import Effect.Aff.Class (class MonadAff, liftAff)
 import Effect.Class (liftEffect)
-import Elmish (ComponentDef, DispatchMsgFn, ReactElement, Transition, fork, forks, handle, handleMaybe)
+import Elmish (ComponentDef, DispatchMsgFn, ReactElement, Transition, fork, forkVoid, forks, handle, handleMaybe)
 import Elmish.Boot (defaultMain)
 import Elmish.Foreign (Foreign, readForeign)
 import Elmish.HTML.Styled as H
@@ -20,6 +25,7 @@ import Elmish.React.DOM as R
 import Feather as Feather
 import Foreign.Object as F
 import Pusher as Pusher
+import Unsafe.Coerce (unsafeCoerce)
 import Web.HTML as HTML
 import Web.HTML.Location as Location
 import Web.HTML.Window as Window
@@ -45,6 +51,7 @@ data Message
   = ClearReaction UUID
   | DelayClearReaction UUID
   | InitPubView String
+  | PublishReaction String
   | SetChannel String
   | SetReaction String
 
@@ -90,6 +97,14 @@ def = { init, update, view }
           pure s
       Sub _, _ ->
         pure s
+      Pub state, PublishReaction reaction -> do
+        forkVoid $ void $ liftAff $ Affjax.request Affjax.defaultRequest
+          { method = Left POST
+          , url = "http://localhost:3000/publish"
+          , responseFormat = ResponseFormat.json
+          , content = Just $ RequestBody.json $ unsafeCoerce { channel: state.channel, reaction }
+          }
+        pure s
       Pub state, SetChannel channel ->
         pure $ Pub state { channel = channel }
       Pub _, _ ->
@@ -123,7 +138,7 @@ def = { init, update, view }
       where
         reactionButton reaction =
           H.button_ "bg-transparent hover:bg-blue-500 text-blue-700 font-semibold hover:text-white py-2 px-3 border border-blue-500 hover:border-transparent rounded-full m-1 focus:outline-none"
-            { onClick: handle dispatch $ SetReaction reaction
+            { onClick: handle dispatch $ PublishReaction reaction
             }
             reaction
 
@@ -139,6 +154,7 @@ def = { init, update, view }
       , "👏"
       , "🤯"
       , "😬"
+      , "🤔"
       ]
 
     parseMessage :: Foreign -> Maybe String
