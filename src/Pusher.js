@@ -1,4 +1,4 @@
-const pusher = new Pusher('d9473141e15ccf0c9d86', { cluster: 'us2' })
+const pusher = new Pusher('fd32b87508ffffee4257', { cluster: 'us2' })
 
 exports.subscribe_ = function (channelName, fn) {
   const channel = pusher.subscribe(channelName)

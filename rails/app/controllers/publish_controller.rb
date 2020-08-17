@@ -3,8 +3,8 @@ require 'pusher'
 class PublishController < ApplicationController
   PUSHER = Pusher::Client.new(
     app_id: '1056078',
-    key: 'd9473141e15ccf0c9d86',
-    secret: '14e5dff2a2e71c99f0b9',
+    key: 'fd32b87508ffffee4257',
+    secret: ENV["PUSHER_SECRET"],
     cluster: 'us2'
   )
 
